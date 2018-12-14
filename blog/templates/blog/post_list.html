@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>CV Project blog</title>
+    </head>
+    <body>
+        <div>
+            <h1><a href="/">CV Project Blog</a></h1>
+        </div>
+        <div>
+            {% for category in categories %}
+                <a href="">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+        {% for post in posts %}
+            <div>
+                <p>created: {{ post.created }}</p>
+                <h1><a href="">{{ post.title }}</a></h1>
+                <p>{{ post.text|linebreaksbr }}</p>
+            </div>
+        {% endfor %}
+    </body>
+</html>
