@@ -1,22 +1,37 @@
-<html>
-    <head>
-        <title>CV Project blog</title>
-    </head>
-    <body>
-        <div>
-            <h1><a href="/">CV Project Blog</a></h1>
-        </div>
-        <div>
-            {% for category in categories %}
-                <a href="">{{ category.name }}</a>
-            {% endfor %}
-        </div>
-        {% for post in posts %}
-            <div>
-                <p>created: {{ post.created }}</p>
-                <h1><a href="">{{ post.title }}</a></h1>
-                <p>{{ post.text|linebreaksbr }}</p>
+{% extends 'blog/base.html' %}
+
+
+{%  block content %}
+
+            <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
+                <div class="col-md-6 px-0">
+                    <h1 class="display-4 font-italic">{{ newest.title }}</h1>
+                    <p class="lead my-3">{{ newest.text|linebreaksbr }}</p>
+                    <p class="lead mb-0"><a href="#" class="text-white font-weight-bold">Czytaj dalej...</a></p>
+                    <p>Autor: {{ newest.author }}</p>
+                </div>
             </div>
-        {% endfor %}
-    </body>
-</html>
+
+            <div class="row mb-2">
+                {%  for post in posts %}
+                    <div class="col-md-6">
+                      <div class="card flex-md-row mb-4 shadow-sm h-md-250">
+                        <div class="card-body d-flex flex-column align-items-start">
+                          <strong class="d-inline-block mb-2 text-primary">{{ post.category }}</strong>
+                          <h3 class="mb-0">
+                            <a class="text-dark" href="#">{{ post.title }}</a>
+                          </h3>
+                          <div class="mb-1 text-muted">{{ post.created }}</div>
+                          <p class="card-text mb-auto">{{ post.text }}</p>
+                          <a href="#">Czytaj dalej...</a>
+                            <p>Autor: {{ post.author }}</p>
+                        </div>
+                      </div>
+                {%  endfor %}
+                </div>
+            </div>
+            <nav class="blog-pagination">
+            <a class="btn btn-outline-primary" href="#">Starsze</a>
+            <a class="btn btn-outline-secondary disabled" href="#">Nowsze</a>
+            </nav>
+{% endblock %}
