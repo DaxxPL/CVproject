@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from .models import Post, Category
 from .forms import PostForm
 from django.utils import timezone
@@ -14,7 +15,11 @@ def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     categories = Category.objects.order_by('name')
     if request.method == 'POST':
-        return redirect('post_edit', pk=post.pk)
+        if request.POST['button'] == 'edit':
+            return redirect('post_edit', pk=post.pk)
+        elif request.POST['button'] == 'delete':
+            post.delete()
+            return redirect('post_list')
     return render(request, 'blog/post_detail.html', {'post': post, 'categories': categories})
 
 
@@ -24,7 +29,7 @@ def post_list_filtered_by_category(request, category):
     categories = Category.objects.order_by('name')
     return render(request, 'blog/post_list.html', {'posts': posts, 'categories': categories})
 
-
+@login_required
 def post_new(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
@@ -38,9 +43,10 @@ def post_new(request):
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
 
+@login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    if request.method=='POST':
+    if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
