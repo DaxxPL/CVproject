@@ -29,6 +29,7 @@ def post_list_filtered_by_category(request, category):
     categories = Category.objects.order_by('name')
     return render(request, 'blog/post_list.html', {'posts': posts, 'categories': categories})
 
+
 @login_required
 def post_new(request):
     if request.method == 'POST':
@@ -42,6 +43,7 @@ def post_new(request):
     else:
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
+
 
 @login_required
 def post_edit(request, pk):
