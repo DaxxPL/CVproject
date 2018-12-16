@@ -7,7 +7,7 @@
                 <div class="col-md-6 px-0">
                     <h1 class="display-4 font-italic">{{ newest.title }}</h1>
                     <p class="lead my-3">{{ newest.text|linebreaksbr }}</p>
-                    <p class="lead mb-0"><a href="#" class="text-white font-weight-bold">Czytaj dalej...</a></p>
+                    <p class="lead mb-0"><a href="{% url 'post_detail' pk=newest.pk %}" class="text-white font-weight-bold">Czytaj dalej...</a></p>
                     <p>Autor: {{ newest.author }}</p>
                 </div>
             </div>
@@ -19,11 +19,11 @@
                         <div class="card-body d-flex flex-column align-items-start">
                           <strong class="d-inline-block mb-2 text-primary">{{ post.category }}</strong>
                           <h3 class="mb-0">
-                            <a class="text-dark" href="#">{{ post.title }}</a>
+                            <a class="text-dark" href="{%  url 'post_detail' pk=post.pk %}">{{ post.title }}</a>
                           </h3>
                           <div class="mb-1 text-muted">{{ post.created }}</div>
                           <p class="card-text mb-auto">{{ post.text }}</p>
-                          <a href="#">Czytaj dalej...</a>
+                          <a href="{%  url 'post_detail' pk=post.pk %}">Czytaj dalej...</a>
                             <p>Autor: {{ post.author }}</p>
                         </div>
                       </div>

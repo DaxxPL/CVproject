@@ -1,0 +1,15 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    <main role="main" class="containter">
+        <div class="row">
+            <div class="blog-post">
+            <h2 class="blog-post-title">{{ post.title }}</h2>
+            <p class="blog-post-meta">{{ post.created }} {{ post.author }}</p>
+            <p>{{ post.text | linebreaksbr }}</p>
+
+          </div>
+        </div>
+    </main>
+
+{% endblock %}
