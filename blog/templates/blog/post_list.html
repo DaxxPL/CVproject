@@ -23,7 +23,7 @@
                             <a class="text-dark" href="{%  url 'post_detail' pk=post.pk %}">{{ post.title }}</a>
                           </h3>
                           <div class="mb-1 text-muted">{{ post.created }}</div>
-                          <p class="card-text mb-auto">{{ post.text }}</p>
+                          <p class="card-text mb-auto">{{ post.preview_of_text }}</p>
                           <a href="{%  url 'post_detail' pk=post.pk %}">Czytaj dalej...</a>
                             <p>Autor: {{ post.author }}</p>
                         </div>
@@ -32,7 +32,15 @@
                 {%  endfor %}
             </div>
             <nav class="blog-pagination">
-            <a class="btn btn-outline-primary" href="#">Starsze</a>
-            <a class="btn btn-outline-secondary disabled" href="#">Nowsze</a>
+                {% if older_exists %}
+                    <a class="btn btn-outline-primary" href="{% url 'post_list' %}?older={{ first }}">Starsze</a>
+                {% else %}
+                    <a class="btn btn-outline-secondary disabled" href="#">Starsze</a>
+                {% endif %}
+                {% if newer_exists %}
+                    <a class="btn btn-outline-primary" href="{% url 'post_list' %}?older={{ first }}">Nowsze</a>
+                {% else %}
+                    <a class="btn btn-outline-secondary disabled" href="#">Nowsze</a>
+                {% endif %}
             </nav>
 {% endblock %}

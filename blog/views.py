@@ -5,10 +5,23 @@ from .forms import PostForm
 from django.utils import timezone
 
 
-def post_list(request):
-    posts = Post.objects.order_by('-created')
-    categories = Category.objects.order_by('name')
-    return render(request, 'blog/post_list.html', {'newest': posts[0], 'posts': posts[1:], 'categories': categories})
+def post_list(request, first=0):
+    if request.method == 'GET':
+            if 'older' in request.GET.keys():
+                first += 10
+            elif 'newer' in request.GET.keys():
+                first -= 10
+            posts = Post.objects.order_by('-created')[first:first+10]
+            older_exists = len(Post.objects.all()[first + 10:first + 20]) > 0
+            if first > 10:
+                newer_exists = len(Post.objects.all()[first - 10:first]) > 0
+            else:
+                newer_exists = False
+            categories = Category.objects.order_by('name')
+            return render(request, 'blog/post_list.html', {'newest': posts[0], 'posts': posts[1:],
+                                                           'categories': categories, 'first': first,
+                                                           'older_exists': older_exists,
+                                                           'newer_exists': newer_exists})
 
 
 def post_detail(request, pk):
