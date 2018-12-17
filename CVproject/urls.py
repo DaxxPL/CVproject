@@ -22,4 +22,6 @@ urlpatterns = [
     path('accounts/login/', views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('accounts/logout/', views.LogoutView.as_view(next_page='/'), name='logout'),
     path('', include('blog.urls')),
+    path('api/', include('api.urls')),
+
 ]
