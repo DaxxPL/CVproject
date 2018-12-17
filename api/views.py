@@ -2,9 +2,10 @@ from rest_framework import status, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from blog.models import Post, Category
-from api.serializers import PostSerializer, UserSerializer
+from api.serializers import PostSerializer, UserSerializer, CategorySerializer
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAdminUser
+from api.permissions import IsOwnerOrReadOnly
 
 
 class UserList(generics.ListCreateAPIView):
@@ -18,7 +19,33 @@ class UserList(generics.ListCreateAPIView):
         return Response(serializer.data)
 
 
-@api_view(['GET', 'POST'])
+class PostMixin(object):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
+
+class PostList(PostMixin, generics.ListCreateAPIView):
+    pass
+
+
+class PostDetail(PostMixin, generics.RetrieveUpdateDestroyAPIView):
+    pass
+
+
+class CategoryMixin(object):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CategoryList(CategoryMixin, generics.ListAPIView):
+    pass
+
+
+"""@api_view(['GET', 'POST'])
 def api_posts(request):
     if request.method == 'GET':
         posts = Post.objects.all()
@@ -52,3 +79,4 @@ def api_post_detail(request, pk):
     elif request.method == 'DELETE':
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+        """
