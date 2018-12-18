@@ -3,25 +3,35 @@ from django.contrib.auth.decorators import login_required
 from .models import Post, Category
 from .forms import PostForm
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 
-def post_list(request, first=0):
+def post_list(request):
+    categories = Category.objects.order_by('name')
     if request.method == 'GET':
-            if 'older' in request.GET.keys():
-                first += 10
-            elif 'newer' in request.GET.keys():
-                first -= 10
-            posts = Post.objects.order_by('-created')[first:first+10]
-            older_exists = len(Post.objects.all()[first + 10:first + 20]) > 0
-            if first > 10:
-                newer_exists = len(Post.objects.all()[first - 10:first]) > 0
-            else:
-                newer_exists = False
-            categories = Category.objects.order_by('name')
-            return render(request, 'blog/post_list.html', {'newest': posts[0], 'posts': posts[1:],
-                                                           'categories': categories, 'first': first,
-                                                           'older_exists': older_exists,
-                                                           'newer_exists': newer_exists})
+        if 'category' in request.GET.keys():
+                posts = Post.objects.order_by('-created').\
+                    filter(category=Category.objects.filter(name=request.GET['category']).first())
+                paginator = Paginator(posts, 9)
+                page = request.GET.get('page')
+                paged_posts = paginator.get_page(page)
+                return render(request, 'blog/post_list.html', {'posts': paged_posts,
+                                                               'rest': paged_posts,
+                                                               'categories': categories,
+                                                               'category': request.GET['category']})
+        else:
+            posts = Post.objects.order_by('-created')
+            paginator = Paginator(posts, 9)
+            page = request.GET.get('page')
+            paged_posts = paginator.get_page(page)
+            if page in [None, '1']:
+                return render(request, 'blog/post_list.html', {'posts': paged_posts,
+                                                               'first': paged_posts[0],
+                                                               'rest': paged_posts[1:],
+                                                               'categories': categories})
+            return render(request, 'blog/post_list.html', {'posts': paged_posts,
+                                                           'rest': paged_posts,
+                                                           'categories': categories})
 
 
 def post_detail(request, pk):
@@ -34,13 +44,6 @@ def post_detail(request, pk):
             post.delete()
             return redirect('post_list')
     return render(request, 'blog/post_detail.html', {'post': post, 'categories': categories})
-
-
-def post_list_filtered_by_category(request, category):
-    c = get_object_or_404(Category, name=category)
-    posts = Post.objects.filter(category=c).order_by('-created')
-    categories = Category.objects.order_by('name')
-    return render(request, 'blog/post_list.html', {'posts': posts, 'categories': categories})
 
 
 @login_required
